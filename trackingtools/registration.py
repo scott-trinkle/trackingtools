@@ -55,6 +55,4 @@ def register(input_fn, output_fn, input_modality, output_modality, verbose=0):
         antscall.append('-t')
         antscall.append(transform)
 
-    return antscall
-
     subprocess.run(antscall)

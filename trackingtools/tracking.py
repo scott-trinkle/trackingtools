@@ -6,7 +6,7 @@ data_path = pkg_resources.resource_filename('trackingtools', 'data/')
 
 def track(modality, exp_id, tracks, algorithm='iFOD2', select=500000,
           step=0.0375, curvature=35, minlength=0.75,
-          maxlength=38.0, cutoff=0.05, nthreads=4):
+          maxlength=38.0, cutoff=0.05, nthreads=4, force=False):
     '''
     See documentation at:
     https://mrtrix.readthedocs.io/en/latest/reference/commands/tckgen.html
@@ -27,10 +27,12 @@ def track(modality, exp_id, tracks, algorithm='iFOD2', select=500000,
         Curvature in um. Converted to angle automatically.
     cutoff : float
         Cutoff ODF value
+    force : bool
+        Force override an existing tract file. Default is False. 
     '''
 
     source = data_path + f'{modality}/{modality}_odfs.nii.gz'
-    seed_image = data_path + f'{modality}/seed_images/I{exp_id}_seeds.nii.gz'
+    seed_image = data_path + f'{modality}/seed_images/I{exp_id}.nii.gz'
 
     # From Aydogan paper, using same radius of curvature
     angle = 2 * np.arcsin(step * 1000 / (2 * curvature)) * 180 / np.pi
@@ -45,6 +47,8 @@ def track(modality, exp_id, tracks, algorithm='iFOD2', select=500000,
                   '-angle', f'{angle}',
                   '-seed_rejection', seed_image,
                   '-nthreads', f'{nthreads}']
+    if force:
+        track_call.append('-force')
     track_call.append(source)
     track_call.append(tracks)
 
