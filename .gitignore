@@ -1,0 +1,5 @@
+.DS_Store
+trackingtools.egg-info
+*.nii.gz
+__pycache__
+*.mat
