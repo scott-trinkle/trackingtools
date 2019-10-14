@@ -6,7 +6,8 @@ data_path = pkg_resources.resource_filename('trackingtools', 'data/')
 
 def track(modality, exp_id, tracks, algorithm='iFOD2', select=500000,
           step=0.0375, curvature=35, minlength=0.75,
-          maxlength=38.0, cutoff=0.05, nthreads=4, force=False):
+          maxlength=38.0, cutoff=0.05, nthreads=4, force=False,
+          force_seed_mask=None):
     '''
     See documentation at:
     https://mrtrix.readthedocs.io/en/latest/reference/commands/tckgen.html
@@ -32,7 +33,11 @@ def track(modality, exp_id, tracks, algorithm='iFOD2', select=500000,
     '''
 
     source = data_path + f'{modality}/{modality}_odfs.nii.gz'
-    seed_image = data_path + f'{modality}/seed_images/I{exp_id}.nii.gz'
+
+    if exp_id is not None:
+        seed_image = data_path + f'{modality}/seed_images/I{exp_id}.nii.gz'
+    elif force_seed_mask is not None:
+        seed_image = force_seed_mask
 
     # From Aydogan paper, using same radius of curvature
     angle = 2 * np.arcsin(step * 1000 / (2 * curvature)) * 180 / np.pi
